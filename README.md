@@ -1,6 +1,5 @@
 # do_an_movie
-
-A new Flutter project.
+Đồ án tốt nghiệp 2023 bản final
 
 ## Getting Started
 
