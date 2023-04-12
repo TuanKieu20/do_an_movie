@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "948404824611",
+    "project_id": "do-an-movie",
+    "storage_bucket": "do-an-movie.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:948404824611:android:17896de1c573cf21af9f96",
+        "android_client_info": {
+          "package_name": "com.example.do_an_movie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "948404824611-280b32gpcrdk9rpn7thk0mfhjnnvuskc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBojgjJNQPbWgXYxHaH9ck9ylLozpEu0Rk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "948404824611-280b32gpcrdk9rpn7thk0mfhjnnvuskc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
