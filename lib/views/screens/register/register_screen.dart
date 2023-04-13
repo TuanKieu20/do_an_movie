@@ -67,84 +67,81 @@ class RegisterScreen extends StatelessWidget {
                               Stack(
                                 alignment: Alignment.center,
                                 children: [
-                                  BackdropFilter(
-                                    filter: ImageFilter.blur(
-                                        sigmaX: 1.0, sigmaY: 1.0),
-                                    child: InkWell(
-                                      onTap: () {
-                                        showModalBottomSheet(
-                                            backgroundColor: Colors.transparent,
-                                            context: context,
-                                            builder: ((builder) {
-                                              return Container(
-                                                  height: Get.height * 0.2,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                      20,
-                                                    ),
+                                  InkWell(
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                          backgroundColor: Colors.transparent,
+                                          context: context,
+                                          builder: ((builder) {
+                                            return Container(
+                                                height: Get.height * 0.2,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                    20,
                                                   ),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    children: [
-                                                      // const SizedBox(
-                                                      //     height: 30),
-                                                      RowChooseOption(
-                                                        text: 'Thư viện ảnh',
-                                                        icon: Icons.photo,
-                                                        onTap: () {
-                                                          controller.getImage(
-                                                              context);
-                                                          Get.back();
-                                                        },
-                                                      ),
-                                                      RowChooseOption(
-                                                        text: 'Chụp ảnh',
-                                                        icon: Icons.camera_alt,
-                                                        onTap: () {
-                                                          controller.getImage(
-                                                              context,
-                                                              isCamera: true);
-                                                        },
-                                                      )
-                                                    ],
-                                                  ));
-                                            }));
-                                      },
-                                      child: GetBuilder<RegisterController>(
-                                          builder: (builder) {
-                                        return Container(
-                                          width: 140,
-                                          height: 140,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: AppColors.blue3451F,
-                                                width: 3),
-                                            shape: BoxShape.circle,
-                                            color: Colors.red,
-                                            image: controller.imageFile == ''
-                                                ? const DecorationImage(
-                                                    image: AssetImage(
-                                                        'assets/images/personal.png'))
-                                                : DecorationImage(
-                                                    fit: BoxFit.cover,
-                                                    image: FileImage(File(
-                                                        controller.imageFile))),
-                                            boxShadow: const [
-                                              BoxShadow(
-                                                  offset: Offset(3, 5),
-                                                  color: Colors.black,
-                                                  blurRadius: 6.0,
-                                                  spreadRadius: 4.0)
-                                            ],
-                                          ),
-                                        );
-                                      }),
-                                    ),
+                                                ),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    // const SizedBox(
+                                                    //     height: 30),
+                                                    RowChooseOption(
+                                                      text: 'Thư viện ảnh',
+                                                      icon: Icons.photo,
+                                                      onTap: () {
+                                                        controller
+                                                            .getImage(context);
+                                                        Get.back();
+                                                      },
+                                                    ),
+                                                    RowChooseOption(
+                                                      text: 'Chụp ảnh',
+                                                      icon: Icons.camera_alt,
+                                                      onTap: () {
+                                                        controller.getImage(
+                                                            context,
+                                                            isCamera: true);
+                                                      },
+                                                    )
+                                                  ],
+                                                ));
+                                          }));
+                                    },
+                                    child: GetBuilder<RegisterController>(
+                                        builder: (builder) {
+                                      return Container(
+                                        width: 140,
+                                        height: 140,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: AppColors.blue3451F,
+                                              width: 3),
+                                          shape: BoxShape.circle,
+                                          color: Colors.red,
+                                          image: controller.imageFile == ''
+                                              ? const DecorationImage(
+                                                  image: AssetImage(
+                                                      'assets/images/personal.png'))
+                                              : DecorationImage(
+                                                  fit: BoxFit.cover,
+                                                  image: FileImage(File(
+                                                      controller.imageFile))),
+                                          boxShadow: const [
+                                            BoxShadow(
+                                                offset: Offset(3, 5),
+                                                color: Colors.black,
+                                                blurRadius: 6.0,
+                                                spreadRadius: 4.0)
+                                          ],
+                                        ),
+                                      );
+                                    }),
                                   ),
+
                                   // IconButton(
                                   //   onPressed: () {},
                                   //   icon: Icon(

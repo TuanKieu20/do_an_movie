@@ -181,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: Colors.black,
                                 text: 'Create New Account',
                                 backgroundColor: Colors.white,
-                                onTap: () async {
+                                onTap: () {
                                   // final List<MovieModel> list = [];
                                   Get.toNamed(Routes.register);
 

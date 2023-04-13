@@ -16,6 +16,7 @@ class AllMovieScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0.0,
+        centerTitle: false,
         leading: IconButton(
             onPressed: (() => Get.back()),
             icon: const Icon(
@@ -25,7 +26,7 @@ class AllMovieScreen extends StatelessWidget {
             )),
         title: Text(
           data['title'],
-          style: mikado500.copyWith(fontSize: 22),
+          style: mikado500.copyWith(fontSize: 20),
         ),
         actions: [
           IconButton(

@@ -33,10 +33,10 @@ class PremiumHeader extends StatelessWidget {
           Container(
             width: double.infinity,
             // height: 60,
-            padding: const EdgeInsets.symmetric(vertical: 20),
+            padding: const EdgeInsets.symmetric(vertical: 10),
             decoration: BoxDecoration(
                 border: Border.all(
-                  width: 2,
+                  width: 1,
                   color: Colors.red,
                 ),
                 borderRadius: BorderRadius.circular(20),
@@ -45,7 +45,7 @@ class PremiumHeader extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Transform.scale(
-                  scale: 2.2,
+                  scale: 1.5,
                   child: const Icon(
                     Icons.workspace_premium_outlined,
                     color: Colors.red,
@@ -59,7 +59,7 @@ class PremiumHeader extends StatelessWidget {
                     Text(
                       'Tham gia gói Premium!',
                       style:
-                          mikado500.copyWith(fontSize: 18, color: Colors.red),
+                          mikado500.copyWith(fontSize: 16, color: Colors.red),
                     ),
                     const SizedBox(height: 5),
                     Text(

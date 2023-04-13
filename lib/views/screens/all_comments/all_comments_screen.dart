@@ -57,7 +57,10 @@ class AllCommentsScreen extends StatelessWidget {
                           itemCount: movieTemp.comments!.length,
                           itemBuilder: (context, index) {
                             return BuildComments(
-                                movie: movieTemp, index: index);
+                              movie: movieTemp,
+                              index: index,
+                              isShowAll: true,
+                            );
                           }),
                       Align(
                         alignment: Alignment.bottomCenter,

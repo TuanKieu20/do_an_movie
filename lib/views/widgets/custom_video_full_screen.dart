@@ -121,16 +121,17 @@ class _VideoPlayerFullscreenState extends State<VideoPlayerFullscreen>
           ),
         ),
         IconButton(
-          onPressed: () {
+          onPressed: () async {
             if (controller.isFullScreen()) {
-              SystemChrome.setPreferredOrientations([
+              await SystemChrome.setPreferredOrientations([
                 DeviceOrientation.portraitUp,
                 DeviceOrientation.portraitDown,
               ]);
               controller.changeIsFullScreen(false);
             } else {
-              SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-              SystemChrome.setPreferredOrientations(
+              await SystemChrome.setEnabledSystemUIMode(
+                  SystemUiMode.immersiveSticky);
+              await SystemChrome.setPreferredOrientations(
                 [
                   DeviceOrientation.landscapeLeft,
                   DeviceOrientation.landscapeRight,
@@ -155,12 +156,14 @@ class _VideoPlayerFullscreenState extends State<VideoPlayerFullscreen>
         IconButton(
             onPressed: () {
               controller.changeShowOverlay(true);
+              controller.changeIsPlaying(false);
               videoPlayer.pause();
               int check = controller.position().inSeconds - 10;
               Duration newPosition = Duration(seconds: check > 0 ? check : 0);
               videoPlayer
                 ..seekTo(newPosition)
                 ..play();
+              controller.changeIsPlaying(true);
             },
             icon: Icon(
               Icons.replay_10_rounded,
@@ -168,25 +171,24 @@ class _VideoPlayerFullscreenState extends State<VideoPlayerFullscreen>
               size: controller.isFullScreen() ? 32 : 24,
             )),
         InkWell(
-          onTap: () {
-            if (widget._videoPlayerController.value.isPlaying) {
-              videoPlayer.pause();
-              _animationController.forward();
-            } else {
-              videoPlayer.play();
-              _animationController.reverse();
-            }
-          },
-          child: AnimatedIcon(
-            icon: AnimatedIcons.pause_play,
-            progress: _animationController,
-            size: controller.isFullScreen() ? 50 : 38,
-            color: Colors.white,
-          ),
-        ),
+            onTap: () {
+              if (videoPlayer.value.isPlaying) {
+                controller.changeIsPlaying(false);
+                videoPlayer.pause();
+              } else {
+                controller.changeIsPlaying(true);
+                videoPlayer.play();
+              }
+            },
+            child: Icon(
+              controller.isPlaying.value ? Icons.pause : Icons.play_arrow,
+              size: controller.isFullScreen() ? 50 : 38,
+              color: Colors.white,
+            )),
         IconButton(
             onPressed: () {
               controller.changeShowOverlay(true);
+              controller.changeIsPlaying(false);
               videoPlayer.pause();
 
               int check = controller.position().inSeconds + 10;
@@ -194,6 +196,7 @@ class _VideoPlayerFullscreenState extends State<VideoPlayerFullscreen>
               videoPlayer
                 ..seekTo(newPosition)
                 ..play();
+              controller.changeIsPlaying(true);
             },
             icon: Icon(
               Icons.forward_10_rounded,

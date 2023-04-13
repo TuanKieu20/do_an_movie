@@ -95,7 +95,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         validator: ((value) {
                           if (value!.isEmpty) {
                             return 'Vui lòng nhập tên của bạn';
-                          } else if (value.length < 8) {
+                          } else if (value.length < 6) {
                             return 'Tên quá ngắn, vui lòng thử lại';
                           }
                           return null;

@@ -6,11 +6,16 @@ import '../../../../models/movie_model.dart';
 import '../../../helpers/helper.dart';
 
 class BuildComments extends StatelessWidget {
-  const BuildComments({Key? key, required this.movie, required this.index})
+  const BuildComments(
+      {Key? key,
+      required this.movie,
+      required this.index,
+      this.isShowAll = false})
       : super(key: key);
 
   final MovieModel movie;
   final int index;
+  final bool isShowAll;
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +91,8 @@ class BuildComments extends StatelessWidget {
               )
             ],
           ),
-          if (index == movie.comments!.length - 1) const SizedBox(height: 150)
+          if (index == movie.comments!.length - 1)
+            SizedBox(height: isShowAll ? 150 : 20)
         ],
       ),
     );

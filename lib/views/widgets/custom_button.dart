@@ -34,14 +34,14 @@ class CustomButton extends StatelessWidget {
           height: height ?? 55,
           alignment: Alignment.center,
           // padding: const Ed,
-          margin: const EdgeInsets.symmetric(horizontal: 30),
+          // margin: const EdgeInsets.symmetric(horizontal: 30),
           decoration: BoxDecoration(
               color: backgroundColor,
               borderRadius: BorderRadius.circular(radius ?? 16)),
           child: Text(
             text,
             style: mikado500.copyWith(
-                fontSize: fontSize ?? 20,
+                fontSize: fontSize ?? 18,
                 color: color,
                 fontWeight: fontWeight ?? FontWeight.w500),
           )),

@@ -50,7 +50,7 @@ class RegisterController extends GetxController {
         _timer.cancel();
         time(5);
         changeShowDialog(false);
-        Get.offAllNamed(Routes.home);
+        Get.offAllNamed(Routes.bottomNavigator);
       }
       update();
     });

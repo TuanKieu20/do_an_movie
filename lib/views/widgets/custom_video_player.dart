@@ -105,7 +105,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
             child: GetX<VideoController>(builder: (builder) {
               return Stack(
                 children: [
-                  _videoPlayerController.value.isPlaying
+                  _videoPlayerController.value.isInitialized
                       ? controller.isFullScreen()
                           ? VideoPlayerFullscreen(
                               videoPlayerController: _videoPlayerController,

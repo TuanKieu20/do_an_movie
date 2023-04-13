@@ -94,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return SliverAppBar(
       elevation: 0.0,
       backgroundColor: Colors.black,
-      expandedHeight: 300,
+      expandedHeight: 250,
       collapsedHeight: 70,
       leadingWidth: 70,
       pinned: true,
@@ -149,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text(
                   controller.movieTrending!.name!,
-                  style: mikado600.copyWith(fontSize: 24),
+                  style: mikado600.copyWith(fontSize: 20),
                 ),
                 SizedBox(
                   width: 250,
@@ -158,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     maxLines: 1,
                     // textWidthBasis: TextWidthBas,
                     overflow: TextOverflow.ellipsis,
-                    style: mikado400.copyWith(fontSize: 18),
+                    style: mikado400.copyWith(fontSize: 14),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -185,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         backgroundColor: Colors.transparent,
                         text: 'My List',
                         icon: Icons.add,
-                        border: Border.all(width: 2.0, color: Colors.white),
+                        border: Border.all(width: 1.0, color: Colors.white),
                         width: 130,
                         onTap: (() => Helper.showDialogFuntionLoss()))
                   ],
@@ -204,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           icon: const Icon(
             Icons.search_outlined,
-            size: 32,
+            size: 28,
           ),
         ),
         const SizedBox(width: 10),
@@ -214,7 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           icon: const Icon(
             Icons.notifications_none_rounded,
-            size: 32,
+            size: 28,
           ),
         ),
         const SizedBox(width: 10),
@@ -232,9 +232,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return InkWell(
       onTap: onTap,
       child: Container(
-        height: 45,
-        width: width ?? 100,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+        // height: 30,
+        // width: width ?? 100,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
         alignment: Alignment.center,
         decoration: BoxDecoration(
             color: backgroundColor ?? Colors.red,
@@ -243,13 +243,13 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Row(children: [
           Icon(
             icon ?? Icons.play_circle_fill_outlined,
-            size: 28,
+            size: 24,
             color: Colors.white,
           ),
-          const SizedBox(width: 5),
+          const SizedBox(width: 10),
           Text(
             text ?? 'Play',
-            style: mikado400.copyWith(),
+            style: mikado400,
           )
         ]),
       ),
@@ -273,7 +273,7 @@ class RowTitle extends StatelessWidget {
           Text(
             title,
             // controller.movies[0].name!,
-            style: mikado500.copyWith(fontSize: 20),
+            style: mikado500.copyWith(fontSize: 18),
           ),
           TextButton(
               onPressed: func,

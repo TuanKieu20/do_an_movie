@@ -26,14 +26,18 @@ class _LiveStreamScreenState extends State<LiveStreamScreen> {
           elevation: 12.0,
           backgroundColor: Colors.black,
           centerTitle: false,
-          leading: Image.asset(
-            'assets/images/logo.png',
-            width: 30,
-            height: 30,
+          leadingWidth: 60,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Image.asset(
+              'assets/images/logo.png',
+              width: 30,
+              height: 30,
+            ),
           ),
           title: Text(
             'Phim Đang Phát',
-            style: mikado500.copyWith(fontSize: 24),
+            style: mikado500.copyWith(fontSize: 18),
           ),
         ),
         body: GetBuilder<LivestreamControlelr>(builder: (builder) {

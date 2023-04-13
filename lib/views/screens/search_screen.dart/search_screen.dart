@@ -205,7 +205,7 @@ class ModelSoftFilter extends StatelessWidget {
                     child: Text(
                       'Sort & Filter',
                       style:
-                          mikado700.copyWith(color: Colors.red, fontSize: 21),
+                          mikado700.copyWith(color: Colors.red, fontSize: 18),
                     ),
                   ),
                   const Padding(
@@ -224,7 +224,7 @@ class ModelSoftFilter extends StatelessWidget {
                           children: [
                             Text(
                               'Thể loại',
-                              style: mikado500.copyWith(fontSize: 22),
+                              style: mikado500.copyWith(fontSize: 18),
                             ),
                             const SizedBox(height: 10),
                             Wrap(
@@ -330,7 +330,7 @@ class ModelSoftFilter extends StatelessWidget {
                             ),
                             Text(
                               'Xếp hạng',
-                              style: mikado500.copyWith(fontSize: 22),
+                              style: mikado500.copyWith(fontSize: 18),
                             ),
                             const SizedBox(height: 10),
                             Wrap(
@@ -388,7 +388,7 @@ class ModelSoftFilter extends StatelessWidget {
                             ),
                             Text(
                               'Sắp xếp',
-                              style: mikado500.copyWith(fontSize: 22),
+                              style: mikado500.copyWith(fontSize: 18),
                             ),
                             const SizedBox(height: 10),
                             Wrap(
@@ -448,7 +448,7 @@ class ModelSoftFilter extends StatelessWidget {
                                   },
                                   isClicked: false,
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 35, vertical: 15),
+                                      horizontal: 35, vertical: 8),
                                 ),
                                 ButtonContainer(
                                   text: 'Áp dụng',
@@ -460,7 +460,7 @@ class ModelSoftFilter extends StatelessWidget {
                                   },
                                   isClicked: false,
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 35, vertical: 15),
+                                      horizontal: 35, vertical: 8),
                                 ),
                               ],
                             )
@@ -508,15 +508,15 @@ class ButtonContainer extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(right: 10, bottom: 10),
         padding:
-            padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            padding ?? const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         decoration: BoxDecoration(
-            border: Border.all(width: 2, color: Colors.red),
+            border: Border.all(width: 1, color: Colors.red),
             borderRadius: BorderRadius.circular(30),
             color: isClicked ? Colors.red : Colors.transparent),
         child: Text(
           text,
           style:
-              mikado500.copyWith(color: isClicked ? Colors.white : Colors.red),
+              mikado400.copyWith(color: isClicked ? Colors.white : Colors.red),
         ),
       ),
     );

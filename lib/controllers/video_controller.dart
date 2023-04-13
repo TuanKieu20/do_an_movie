@@ -11,6 +11,7 @@ class VideoController extends GetxController {
   var startOverlayTimming = true.obs;
   var mute = true.obs;
   var isFullScreen = true.obs;
+  var isPlaying = true.obs;
 
   Timer _timer = Timer(const Duration(seconds: 100), () {});
 
@@ -26,6 +27,11 @@ class VideoController extends GetxController {
   void chagneDuration(Duration value) => duration(value);
   void changeMute(bool value) => mute(value);
   void changeIsFullScreen(bool value) => isFullScreen(value);
+  void changeIsPlaying(bool value) {
+    isPlaying(value);
+    update();
+  }
+
   void changeShowOverlay(bool value) {
     if (value) {
       autoHideOverlay();
