@@ -85,12 +85,31 @@ class _DetailMovieScreenState extends State<DetailMovieScreen>
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                movie['movie'].name,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: mikado600.copyWith(
-                                    color: Colors.white, fontSize: 18),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SizedBox(
+                                    width: Get.width * 0.7,
+                                    child: Text(
+                                      movie['movie'].name,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: mikado600.copyWith(
+                                          color: Colors.white, fontSize: 18),
+                                    ),
+                                  ),
+                                  IconButton(
+                                      onPressed: () {
+                                        controller.addMovieFavorite(
+                                            idMovie: movie['movie'].id);
+                                      },
+                                      icon: const Icon(
+                                        Icons.bookmark_add_outlined,
+                                        size: 32,
+                                        color: Colors.red,
+                                      ))
+                                ],
                               ),
                               const SizedBox(height: 20),
                               _rowInfo(movie),
@@ -164,7 +183,7 @@ class _DetailMovieScreenState extends State<DetailMovieScreen>
                                           text: movie['movie'].author,
                                           style: mikado400),
                                       TextSpan(
-                                          text: '\nDirector',
+                                          text: '\nTác giả',
                                           style: mikado400.copyWith(
                                               color: Colors.grey))
                                     ]))

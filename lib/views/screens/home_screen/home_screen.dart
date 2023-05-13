@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -24,22 +25,27 @@ class _HomeScreenState extends State<HomeScreen> {
   final controller = Get.find<HomeController>();
   @override
   void initState() {
-    // WidgetsBinding.instance.addPostFrameCallback((_) async {
-    //   _scrollController.addListener(() {
-    //     setState(() {
-    //       // logger.d(_scrollController.position.maxScrollExtent);
-    //       // logger.d(_scrollController.position.pixels.toInt());
-    //       opacity = _scrollController.position.pixels /
-    //           _scrollController.position.maxScrollExtent;
-    //       if (opacity > 1.0) {
-    //         opacity = 1.0;
-    //       }
-    //       if (opacity < 0.0) {
-    //         opacity = 0.0;
-    //       }
-    //     });
-    //   });
-    // });
+    // controller.getMoviesForYou();
+    // controller.getMovies();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // await controller.getMoviesForYou();
+      // await controller.getMovies();
+      // await controller.getMoviesForYou();
+      // _scrollController.addListener(() {
+      //   setState(() {
+      //     // logger.d(_scrollController.position.maxScrollExtent);
+      //     // logger.d(_scrollController.position.pixels.toInt());
+      //     opacity = _scrollController.position.pixels /
+      //         _scrollController.position.maxScrollExtent;
+      //     if (opacity > 1.0) {
+      //       opacity = 1.0;
+      //     }
+      //     if (opacity < 0.0) {
+      //       opacity = 0.0;
+      //     }
+      //   });
+      // });
+    });
     // controller.getMovies();
 
     super.initState();
@@ -61,6 +67,15 @@ class _HomeScreenState extends State<HomeScreen> {
           controller: _scrollController,
           slivers: [
             _header(),
+            RowTitle(
+                title: 'Movies For You',
+                func: () {
+                  Get.toNamed(Routes.allMovie, arguments: {
+                    'title': 'Movies For You',
+                    'movies': controller.moviesForYou
+                  });
+                }),
+            _buildMoviesForYou(),
             RowTitle(
                 title: 'Top 10 Movies This Week',
                 func: () {
@@ -90,11 +105,65 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  SliverToBoxAdapter _buildMoviesForYou() {
+    return SliverToBoxAdapter(
+        child: Container(
+      // color: Colors.green,
+      height: 150,
+      padding: const EdgeInsets.only(left: 20),
+      child: ListView.builder(
+          itemCount: controller.moviesForYou.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: ((context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: InkWell(
+                onTap: (() => Get.toNamed(Routes.detailMovie,
+                    arguments: {'movie': controller.moviesForYou[index]})),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                      width: 110,
+                      height: 110,
+                      // margin: const EdgeInsets.only(right: 20),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            width: 3.0,
+                            color: Helper.colorBorder[Random().nextInt(6)]),
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(
+                            controller.moviesForYou[index].poster ?? '',
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 140,
+                      child: Text(
+                        controller.moviesForYou[index].name ?? '',
+                        overflow: TextOverflow.visible,
+                        maxLines: 1,
+                        textAlign: TextAlign.center,
+                        style: mikado600.copyWith(
+                            color: Colors.white, fontSize: 16),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            );
+          })),
+    ));
+  }
+
   SliverAppBar _header() {
     return SliverAppBar(
       elevation: 0.0,
       backgroundColor: Colors.black,
-      expandedHeight: 250,
+      expandedHeight: 300,
       collapsedHeight: 70,
       leadingWidth: 70,
       pinned: true,
@@ -114,7 +183,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 image: DecorationImage(
               // image: NetworkImage(controller.movieTrending!.poster!),
               image: CachedNetworkImageProvider(
-                controller.movieTrending!.poster!,
+                controller.movieTrending!.poster ??
+                    'assets/images/image_error.jpeg',
                 errorListener: () => Image.asset(
                   'assets/images/image_error.jpeg',
                   fit: BoxFit.cover,
@@ -126,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
               child: Container(
-                decoration: BoxDecoration(color: Colors.black.withOpacity(0.0)),
+                decoration: BoxDecoration(color: Colors.black.withOpacity(0.4)),
               ),
             ),
           ),
@@ -152,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: mikado600.copyWith(fontSize: 20),
                 ),
                 SizedBox(
-                  width: 250,
+                  width: 300,
                   child: Text(
                     controller.movieTrending!.description!,
                     maxLines: 1,
@@ -187,7 +257,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         icon: Icons.add,
                         border: Border.all(width: 1.0, color: Colors.white),
                         width: 130,
-                        onTap: (() => Helper.showDialogFuntionLoss()))
+                        // onTap: (() => Helper.showDialogFuntionLoss()))
+                        onTap: () {
+                          controller.addMovieFavorite(
+                              idMovie: controller.movieTrending!.id);
+                        })
                   ],
                 ),
                 const SizedBox(height: 30)
@@ -197,19 +271,20 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       )),
       actions: [
-        IconButton(
-          onPressed: () {
-            Helper.showDialogFuntionLoss();
-            // Get.find<HomeController>().getMovies();
-          },
-          icon: const Icon(
-            Icons.search_outlined,
-            size: 28,
-          ),
-        ),
+        // IconButton(
+        //   onPressed: () {
+        //     Helper.showDialogFuntionLoss();
+        //     // Get.find<HomeController>().getMovies();
+        //   },
+        //   icon: const Icon(
+        //     Icons.search_outlined,
+        //     size: 28,
+        //   ),
+        // ),
         const SizedBox(width: 10),
         IconButton(
           onPressed: () {
+            Helper.showDialogFuntionLoss();
             // controller.getMoviesTop10();
           },
           icon: const Icon(

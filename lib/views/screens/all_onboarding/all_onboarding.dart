@@ -86,16 +86,18 @@ class _AllOnboardingState extends State<AllOnboarding> {
                         ),
                       ),
                       const SizedBox(height: 40),
-                      CustomButton(
-                        onTap: () {
-                          Get.offAllNamed(Routes.login);
-                          Get.delete<OnboardingController>();
-                        },
-                        color: Colors.white,
-                        text: 'Get started'.toUpperCase(),
-                        backgroundColor: Colors.red,
-                        fontWeight: FontWeight.w400,
-                      )
+                      if (controller.index.value == 2)
+                        CustomButton(
+                          onTap: () {
+                            Get.offAllNamed(Routes.login);
+                            Get.delete<OnboardingController>();
+                          },
+                          width: Get.width * 0.8,
+                          color: Colors.white,
+                          text: 'Get started'.toUpperCase(),
+                          backgroundColor: Colors.red,
+                          fontWeight: FontWeight.w400,
+                        )
                     ],
                   ),
                 ),

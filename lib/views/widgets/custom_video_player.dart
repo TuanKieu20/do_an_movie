@@ -3,13 +3,17 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:video_player/video_player.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../../constants/color.dart';
+import '../../constants/logger.dart';
 import '../../constants/router.dart';
 import '../../constants/styles.dart';
+import '../../controllers/home_controller.dart';
 import '../../controllers/livestream_controller.dart';
+import '../../controllers/reaction_controller.dart';
 import '../../controllers/video_controller.dart';
 import '../../models/movie_model.dart';
 import '../helpers/helper.dart';
@@ -41,6 +45,9 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
   @override
   void initState() {
     super.initState();
+    if (Get.find<HomeController>().isUserVip.value) {
+      controller.changeSelectedMenu(SampleItem.itemTwo);
+    }
     liveStreamController.scrollController = ScrollController();
     tabController = TabController(length: 2, vsync: this);
     tabController.addListener(() {
@@ -48,6 +55,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
       liveStreamController.changeIndexTab(tabController.index);
     });
     Wakelock.enable();
+    // assets/videos/Marvel Studios’ Eternals - Official Teaser.mp4
     _videoPlayerController = VideoPlayerController.network(
       (widget.movie.linkUrl == '' || widget.movie.linkUrl!.isEmpty)
           ? 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
@@ -56,6 +64,8 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
               // : widget.movie.linkUrl!,
               : 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     )
+      // _videoPlayerController =
+      //     VideoPlayerController.asset('assets/videos/demo.mp4')
       ..addListener(_listener)
       ..initialize().then((_) {
         controller.setVideoController(_videoPlayerController);
@@ -66,8 +76,15 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
         _videoPlayerController.play();
         controller.autoHideOverlay();
         setState(() {});
+      }, onError: (e) {
+        e as PlatformException;
+        logger.e(e.code);
+        logger.e(e);
       });
   }
+
+  //    _videoPlayerController = VideoPlayerController.asset(
+  //     'assets/videos/Marvel Studios’ Eternals - Official Teaser.mp4')
 
   _listener() async {
     controller
@@ -79,6 +96,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
       liveStreamController.deleteComments(idMovie: movie.id ?? '');
       liveStreamController.changeEndLive(true);
       liveStreamController.updateStartTime(idMovie: movie.id ?? '');
+      // liveStreamController.changeListEmpty(true);
       _buildDialogEndLive();
     }
   }
@@ -97,78 +115,82 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: false,
-      child: Scaffold(
-          backgroundColor: Colors.black,
-          body: SizedBox.expand(
-            child: GetX<VideoController>(builder: (builder) {
-              return Stack(
-                children: [
-                  _videoPlayerController.value.isInitialized
-                      ? controller.isFullScreen()
-                          ? VideoPlayerFullscreen(
-                              videoPlayerController: _videoPlayerController,
-                              movie: widget.movie,
-                              isTrailer: widget.isTrailer,
-                              isLive: isLive,
-                            )
-                          : Column(
-                              // alignment: Alignment.bottomCenter,
-                              children: [
-                                AspectRatio(
-                                  aspectRatio: 16 / 9,
-                                  child: VideoPlayerFullscreen(
-                                    videoPlayerController:
-                                        _videoPlayerController,
-                                    movie: widget.movie,
-                                    isTrailer: widget.isTrailer,
-                                    isLive: isLive,
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: SafeArea(
+        bottom: false,
+        child: Scaffold(
+            backgroundColor: Colors.black,
+            body: SizedBox.expand(
+              child: GetX<VideoController>(builder: (builder) {
+                return Stack(
+                  children: [
+                    _videoPlayerController.value.isInitialized
+                        ? controller.isFullScreen()
+                            ? VideoPlayerFullscreen(
+                                videoPlayerController: _videoPlayerController,
+                                movie: widget.movie,
+                                isTrailer: widget.isTrailer,
+                                isLive: isLive,
+                              )
+                            : Column(
+                                // alignment: Alignment.bottomCenter,
+                                children: [
+                                  AspectRatio(
+                                    aspectRatio: 16 / 9,
+                                    child: VideoPlayerFullscreen(
+                                      videoPlayerController:
+                                          _videoPlayerController,
+                                      movie: widget.movie,
+                                      isTrailer: widget.isTrailer,
+                                      isLive: isLive,
+                                    ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: isLive
-                                      ? GetBuilder<LivestreamControlelr>(
-                                          builder: (builder) {
-                                          return DefaultTabController(
-                                              length: 2,
-                                              initialIndex: liveStreamController
-                                                  .indexTab.value,
-                                              child: Column(
-                                                children: [
-                                                  _buildTabBar(),
-                                                  Expanded(
-                                                      child: TabBarView(
-                                                          controller:
-                                                              tabController,
-                                                          children: [
-                                                        Builder(
-                                                            builder: (context) {
-                                                          return _tabComment();
-                                                        }),
-                                                        // Container(
-                                                        //   color: Colors.white,
-                                                        // ),
-                                                        Builder(
-                                                            builder: (context) {
-                                                          return _builfInfoMovie();
-                                                        })
-                                                      ]))
-                                                ],
-                                              ));
-                                        })
-                                      : _builfInfoMovie(),
-                                )
-                              ],
-                            )
-                      : controller.isFullScreen()
-                          ? _buildOverlayInit()
-                          : AspectRatio(
-                              aspectRatio: 16 / 9, child: _buildOverlayInit()),
-                ],
-              );
-            }),
-          )),
+                                  Expanded(
+                                    child: isLive
+                                        ? GetBuilder<LivestreamControlelr>(
+                                            builder: (builder) {
+                                            return DefaultTabController(
+                                                length: 2,
+                                                initialIndex:
+                                                    liveStreamController
+                                                        .indexTab.value,
+                                                child: Column(
+                                                  children: [
+                                                    _buildTabBar(),
+                                                    Expanded(
+                                                        child: TabBarView(
+                                                            controller:
+                                                                tabController,
+                                                            children: [
+                                                          Builder(builder:
+                                                              (context) {
+                                                            return _tabComment();
+                                                          }),
+                                                          Builder(builder:
+                                                              (context) {
+                                                            return _builfInfoMovie();
+                                                          })
+                                                        ]))
+                                                  ],
+                                                ));
+                                          })
+                                        : _builfInfoMovie(),
+                                  )
+                                ],
+                              )
+                        : controller.isFullScreen()
+                            ? _buildOverlayInit()
+                            : AspectRatio(
+                                aspectRatio: 16 / 9,
+                                child: _buildOverlayInit()),
+                  ],
+                );
+              }),
+            )),
+      ),
     );
   }
 
@@ -179,14 +201,19 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
             .onValue),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            // logger.e(snapshot.data!.snapshot.value);
           } else {
             final snapshotData = snapshot.data!.snapshot.value;
             if (snapshotData == null) {
-              return CommentEmpty(
-                  liveStreamController: liveStreamController, movie: movie);
+              liveStreamController.changeListEmpty(true);
+              // return CommentEmpty(
+              //     liveStreamController: liveStreamController, movie: movie);
             }
-            final map = snapshot.data!.snapshot.value as Map;
+            if (snapshotData != null) {
+              liveStreamController.changeListEmpty(false);
+            }
+            final map = liveStreamController.isListCommentEmpty.value
+                ? {}
+                : snapshot.data!.snapshot.value as Map;
             var listComment = map.values.toList();
             listComment.sort(
               (a, b) {
@@ -195,8 +222,6 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
                 return time1.compareTo(time2);
               },
             );
-            // logger.e(snapshot.data!.snapshot.value);
-
             return GetBuilder<LivestreamControlelr>(builder: (builder) {
               return InkWell(
                 onTap: (() => FocusScope.of(context).unfocus()),
@@ -206,30 +231,88 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
                       color: Colors.white,
                       child: Stack(
                         children: [
-                          ListView.builder(
-                              controller: liveStreamController.scrollController,
-                              padding: const EdgeInsets.only(
-                                  left: 16, right: 16, top: 0),
-                              itemCount: listComment.length,
-                              itemBuilder: ((context, index) {
-                                final comment = listComment[index];
-                                return Helper.formatEmail(FirebaseAuth.instance
-                                                    .currentUser!.email ??
-                                                "")
-                                            .toLowerCase() ==
-                                        comment['id'].toString().toLowerCase()
-                                    ? _commentOfMine(comment,
-                                        index == listComment.length - 1)
-                                    : _commentGuest(comment,
-                                        index == listComment.length - 1);
-                              })),
+                          liveStreamController.isListCommentEmpty.value
+                              ? SizedBox.expand(
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Lottie.asset(
+                                            'assets/jsons/Comment icon .json',
+                                            width: 100,
+                                            height: 100),
+                                        Text(
+                                            'Trò chuyện cùng mọi người bạn nhé 💗',
+                                            style: mikado400.copyWith(
+                                                color: Colors.black)),
+                                        const SizedBox(height: 70),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  reverse: true,
+                                  controller:
+                                      liveStreamController.scrollController,
+                                  padding: const EdgeInsets.only(
+                                      left: 16, right: 16, top: 0),
+                                  itemCount: listComment.length,
+                                  itemBuilder: ((context, index) {
+                                    final comment = listComment[
+                                        listComment.length - 1 - index];
+                                    return Helper.formatEmail(FirebaseAuth
+                                                        .instance
+                                                        .currentUser!
+                                                        .email ??
+                                                    "")
+                                                .toLowerCase() ==
+                                            comment['id']
+                                                .toString()
+                                                .toLowerCase()
+                                        ? _commentOfMine(comment, index == 0)
+                                        : _commentGuest(comment, index == 0);
+                                  })),
                           CommentContainer(
                               liveStreamController: liveStreamController,
                               movie: movie)
                         ],
                       ),
                     ),
-                    const ReactionAnimation()
+                    // const ReactionAnimation()
+                    StreamBuilder<DatabaseEvent>(
+                        stream: (FirebaseDatabase.instance
+                            .ref('movies/${movie.id}/reaction')
+                            .onValue),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            if (snapshot.data!.snapshot.value != null) {
+                              final snapshotData =
+                                  snapshot.data!.snapshot.value;
+
+                              var listReact =
+                                  (snapshotData as Map).values.toList();
+                              listReact.sort(
+                                (a, b) {
+                                  var time1 = DateTime.parse(a['time']);
+                                  var time2 = DateTime.parse(b['time']);
+                                  return time1.compareTo(time2);
+                                },
+                              );
+                              int typeLike =
+                                  int.parse(listReact.last['type'].toString());
+                              if (typeLike == 0) {
+                                typeLike = 1;
+                              } else if (typeLike == 1) {
+                                typeLike = 0;
+                              }
+                              // snapshot.data!.previousChildKey;
+                              Get.find<ReactionController>()
+                                  .addAnimation(typeLike);
+                            }
+                          }
+                          return const ReactionAnimation();
+                        })
                   ],
                 ),
               );
@@ -255,7 +338,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
               Row(
                 children: [
                   Text(
-                    Helper.capitalize(comment['id']),
+                    Helper.capitalize(comment['name']),
                     style:
                         mikado500.copyWith(fontSize: 14, color: Colors.black),
                   ),
@@ -276,6 +359,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
                         ),
                       ),
                     ),
+                    style: mikado400.copyWith(fontSize: 12, color: Colors.grey),
                   ),
                 ],
               ),
@@ -288,7 +372,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
                         bottomLeft: Radius.circular(12),
                         bottomRight: Radius.circular(12))),
                 child: Text(
-                  comment['data'],
+                  Helper.validateRestrictedWord(comment['data']),
                   style: mikado400.copyWith(fontSize: 14, color: Colors.black),
                 ),
               )
@@ -324,6 +408,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
                     ),
                   ),
                 ),
+                style: mikado400.copyWith(fontSize: 14, color: Colors.grey),
               ),
             ],
           ),
@@ -339,7 +424,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
             ),
             padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
             child: Text(
-              comment['data'],
+              Helper.validateRestrictedWord(comment['data']),
               style: mikado400.copyWith(fontSize: 14),
             ),
           ),
@@ -449,14 +534,43 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
           const SizedBox(height: 20),
           _rowInfo(movie),
           const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: Text(
-              'Mô tả: \n${movie.description}',
-              maxLines: 10,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.justify,
-              style: mikado400,
+          SizedBox(
+            height: 50,
+            child: Row(
+              children: [
+                const CircleAvatar(
+                  radius: 25,
+                  child: FlutterLogo(
+                    size: 32,
+                  ),
+                ),
+                const SizedBox(width: 20),
+                Text.rich(TextSpan(children: [
+                  TextSpan(text: movie.author, style: mikado400),
+                  TextSpan(
+                      text: '\nTác giả',
+                      style: mikado400.copyWith(color: Colors.grey))
+                ]))
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0, bottom: 20),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Text(
+                      'Mô tả: \n${movie.description}',
+                      maxLines: 1000000,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.justify,
+                      style: mikado400,
+                    ),
+                  ],
+                ),
+              ),
             ),
           )
         ],
@@ -617,9 +731,14 @@ class CommentContainer extends StatelessWidget {
                                 comment:
                                     liveStreamController.commentController.text,
                                 idMovie: movie.id ?? '');
-                            liveStreamController.scrollTo(liveStreamController
-                                    .scrollController.position.maxScrollExtent +
-                                100);
+                            liveStreamController.changeListEmpty(false);
+                            FocusScope.of(context).unfocus();
+                            if (!liveStreamController
+                                .isListCommentEmpty.value) {
+                              // liveStreamController.scrollTo(comments.length < 4
+                              //     ? comments.length * 50.0
+                              //     : 0.0);
+                            }
                           }
                         },
                         padding: const EdgeInsets.all(0),
@@ -630,11 +749,13 @@ class CommentContainer extends StatelessWidget {
                               : Colors.blue,
                         ));
                   })
-                : const SizedBox(
+                : SizedBox(
                     width: 150,
                     child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        child: RowReactionIcon()),
+                        child: RowReactionIcon(
+                          idMovie: movie.id ?? 'id',
+                        )),
                   )
           ],
         ),
@@ -738,11 +859,13 @@ class CommentEmpty extends StatelessWidget {
                                   : Colors.blue,
                             ));
                       })
-                    : const SizedBox(
+                    : SizedBox(
                         width: 150,
                         child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
-                            child: RowReactionIcon()),
+                            child: RowReactionIcon(
+                              idMovie: movie.id ?? 'id',
+                            )),
                       )
               ],
             ),

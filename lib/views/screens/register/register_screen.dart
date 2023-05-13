@@ -3,10 +3,13 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../constants/color.dart';
 import '../../../constants/custom_alter.dart';
+import '../../../constants/router.dart';
 import '../../../constants/styles.dart';
+import '../../../controllers/home_controller.dart';
 import '../../../controllers/register_controller.dart';
 import '../../widgets/custom_button.dart';
 import '../login/login_screen.dart';
@@ -209,37 +212,44 @@ class RegisterScreen extends StatelessWidget {
                                 onTap: () async {
                                   if (controller.keyRegister.currentState!
                                       .validate()) {
-                                    var email =
-                                        '${controller.nameController.text}@gmail.com';
-                                    if (controller.keyRegister.currentState!
-                                        .validate()) {
-                                      var res = await controller
-                                          .createEmailAndPassword(email: email);
-                                      if (res.isSuccess) {
-                                        controller.changeShowDialog(true);
-                                        controller.startTimeText();
-                                        showDialog(
-                                            context: context,
-                                            builder: ((context) =>
-                                                GetBuilder<RegisterController>(
-                                                    builder: (builder) {
-                                                  return CustomAlert(
-                                                    labelText:
-                                                        'Đăng ký thành công !\nBạn sẽ được chuyển đến trang chủ sau:',
-                                                    onPressed: () {},
-                                                    buttonText:
-                                                        '${builder.time().toString()}s',
-                                                  );
-                                                })));
-                                      } else {
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return CustomAlert(
-                                                  labelText: res.message,
-                                                  onPressed: () => Get.back());
-                                            });
+                                    if (controller.imageFile != '') {
+                                      final pref =
+                                          Get.find<SharedPreferences>();
+                                      if (pref.getBool('checkUpdateInf') ==
+                                          true) {
+                                        pref.setBool('checkUpdateInf', false);
                                       }
+                                      var email =
+                                          '${controller.nameController.text}@gmail.com';
+                                      if (controller.keyRegister.currentState!
+                                          .validate()) {
+                                        var res = await controller
+                                            .createEmailAndPassword(
+                                                email: email);
+                                        if (res.isSuccess) {
+                                          Get.find<HomeController>()
+                                              .getInforUser();
+                                          Get.toNamed(Routes.suggestTopic);
+                                        } else {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return CustomAlert(
+                                                    labelText: res.message,
+                                                    onPressed: () =>
+                                                        Get.back());
+                                              });
+                                        }
+                                      }
+                                    } else {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return CustomAlert(
+                                                labelText:
+                                                    'Vui lòng chọn ảnh đại diện',
+                                                onPressed: () => Get.back());
+                                          });
                                     }
                                   }
                                 },

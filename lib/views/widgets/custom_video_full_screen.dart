@@ -1,11 +1,16 @@
+import 'dart:ui';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../constants/router.dart';
 import '../../constants/styles.dart';
+import '../../controllers/home_controller.dart';
 import '../../controllers/livestream_controller.dart';
+import '../../controllers/reaction_controller.dart';
 import '../../controllers/video_controller.dart';
 import '../../models/movie_model.dart';
 import '../helpers/helper.dart';
@@ -37,9 +42,11 @@ class _VideoPlayerFullscreenState extends State<VideoPlayerFullscreen>
   VideoPlayerController get videoPlayer => widget._videoPlayerController;
   bool get isLive => widget.isLive;
   final liveController = Get.find<LivestreamControlelr>();
+  final homeController = Get.find<HomeController>();
 
   @override
   void initState() {
+    homeController.getInforUser();
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 500))
       ..addListener(() {
@@ -65,11 +72,32 @@ class _VideoPlayerFullscreenState extends State<VideoPlayerFullscreen>
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        // Get.find<HomeController>().isUserVip.value
         InkWell(
-            onTap: () {
-              controller.changeShowOverlay(true);
-            },
-            child: VideoPlayer(videoPlayer)),
+          onTap: () {
+            controller.changeShowOverlay(true);
+          },
+          child: VideoPlayer(videoPlayer),
+        ),
+
+        /// TODO: chang full hd or 480 quatily with customer vip
+        !Get.find<HomeController>().isUserVip.value
+            ? InkWell(
+                onTap: () {
+                  controller.changeShowOverlay(true);
+                },
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ClipRRect(
+                      child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaY: 2, sigmaX: 2),
+                    child: Container(
+                      color: Colors.black12,
+                    ),
+                  )),
+                ),
+              )
+            : const SizedBox(),
         _buildOverlay()
       ],
     );
@@ -290,7 +318,7 @@ class _VideoPlayerFullscreenState extends State<VideoPlayerFullscreen>
                       }));
                 })),
           ),
-          if (widget.isLive) SizedBox(width: 10),
+          if (widget.isLive) const SizedBox(width: 10),
           isLive
               ? IconButton(
                   onPressed: () {
@@ -350,7 +378,7 @@ class _VideoPlayerFullscreenState extends State<VideoPlayerFullscreen>
                     DeviceOrientation.portraitUp,
                     DeviceOrientation.portraitDown,
                   ]);
-                  // Get.delete<ReactionController>();
+                  Get.delete<ReactionController>();
                   // widget._videoPlayerController.dispose();
                   Get.back();
                 },
@@ -435,11 +463,137 @@ class _VideoPlayerFullscreenState extends State<VideoPlayerFullscreen>
                   _buildButtonTop(Icons.timer_outlined),
                   _buildButtonTop(Icons.keyboard_alt_outlined),
                   _buildButtonTop(Icons.mic_none_rounded),
-                  _buildButtonTop(Icons.more_vert_rounded),
+                  // _buildButtonTop(Icons.more_vert_rounded),
+                  // PopUpMenu(pressed: (SampleItem item) {
+                  //     setState(() {
+                  //       selectedMenu = item;
+                  //     });
+                  //   }, value: selectedMenu)
+                  PopupMenuButton<SampleItem>(
+                    initialValue: controller.selectedMenu,
+                    // Callback that sets the selected popup menu item.
+                    onSelected: (SampleItem item) {
+                      if (!homeController.isUserVip.value &&
+                          item == SampleItem.itemTwo) {
+                        Get.offAndToNamed(Routes.subPremium);
+                        Helper.showDialogFuntionLoss(
+                            text:
+                                'Đăngg kí để có trải nghiêkm tốt nhất cùng chúng tớ bạn nhé !');
+                      }
+                      controller.changeSelectedMenu(item);
+                    },
+                    child: const Icon(
+                      Icons.more_vert_rounded,
+                      color: Colors.white,
+                    ),
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<SampleItem>>[
+                      PopupMenuItem<SampleItem>(
+                        value: SampleItem.itemOne,
+                        child: Row(
+                          children: [
+                            controller.selectedMenu == SampleItem.itemOne
+                                ? const Icon(
+                                    Icons.check,
+                                    color: Colors.red,
+                                  )
+                                : const SizedBox(),
+                            const SizedBox(width: 30),
+                            Text(
+                              '480P',
+                              style: mikado400.copyWith(color: Colors.black),
+                            )
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem<SampleItem>(
+                        value: SampleItem.itemTwo,
+                        child: Row(
+                          children: [
+                            controller.selectedMenu == SampleItem.itemTwo
+                                ? const Icon(
+                                    Icons.check,
+                                    color: Colors.red,
+                                  )
+                                : const SizedBox(),
+                            const SizedBox(width: 30),
+                            Text(
+                              'Full HD',
+                              style: mikado400.copyWith(color: Colors.black),
+                            )
+                          ],
+                        ),
+                      ),
+                      // const PopupMenuItem<SampleItem>(
+                      //   value: SampleItem.itemThree,
+                      //   child: Text('Item 3'),
+                      // ),
+                    ],
+                  ),
                   // s
                 ],
               )
-            : _buildButtonTop(Icons.more_vert_rounded)
+            : PopupMenuButton<SampleItem>(
+                initialValue: controller.selectedMenu,
+                // Callback that sets the selected popup menu item.
+                onSelected: (SampleItem item) {
+                  if (!homeController.isUserVip.value &&
+                      item == SampleItem.itemTwo) {
+                    Get.offAndToNamed(Routes.subPremium);
+                    Helper.showDialogFuntionLoss(
+                        text:
+                            'Đăngg kí để có trải nghiêkm tốt nhất cùng chúng tớ bạn nhé !');
+                  }
+                  controller.changeSelectedMenu(item);
+                },
+                child: const Icon(
+                  Icons.more_vert_rounded,
+                  color: Colors.white,
+                ),
+                itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry<SampleItem>>[
+                  PopupMenuItem<SampleItem>(
+                    value: SampleItem.itemOne,
+                    child: Row(
+                      children: [
+                        controller.selectedMenu == SampleItem.itemOne
+                            ? const Icon(
+                                Icons.check,
+                                color: Colors.red,
+                              )
+                            : const SizedBox(),
+                        const SizedBox(width: 30),
+                        Text(
+                          '480P',
+                          style: mikado400.copyWith(color: Colors.black),
+                        )
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem<SampleItem>(
+                    value: SampleItem.itemTwo,
+                    child: Row(
+                      children: [
+                        controller.selectedMenu == SampleItem.itemTwo
+                            ? const Icon(
+                                Icons.check,
+                                color: Colors.red,
+                              )
+                            : const SizedBox(),
+                        const SizedBox(width: 30),
+                        Text(
+                          'Full HD',
+                          style: mikado400.copyWith(color: Colors.black),
+                        )
+                      ],
+                    ),
+                  ),
+                  // const PopupMenuItem<SampleItem>(
+                  //   value: SampleItem.itemThree,
+                  //   child: Text('Item 3'),
+                  // ),
+                ],
+              ),
       ],
     );
   }
@@ -454,6 +608,39 @@ class _VideoPlayerFullscreenState extends State<VideoPlayerFullscreen>
         color: Colors.white,
         size: 32,
       ),
+    );
+  }
+}
+
+class PopUpMenu extends StatelessWidget {
+  const PopUpMenu({super.key, required this.pressed, required this.value});
+  final dynamic value;
+  final Function pressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<SampleItem>(
+      initialValue: value,
+      // Callback that sets the selected popup menu item.
+      onSelected: pressed(),
+      child: const Icon(
+        Icons.more_vert_rounded,
+        color: Colors.white,
+      ),
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<SampleItem>>[
+        const PopupMenuItem<SampleItem>(
+          value: SampleItem.itemOne,
+          child: Text('Item 1'),
+        ),
+        const PopupMenuItem<SampleItem>(
+          value: SampleItem.itemTwo,
+          child: Text('Item 2'),
+        ),
+        const PopupMenuItem<SampleItem>(
+          value: SampleItem.itemThree,
+          child: Text('Item 3'),
+        ),
+      ],
     );
   }
 }

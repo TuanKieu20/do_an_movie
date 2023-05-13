@@ -2,12 +2,15 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../constants/color.dart';
 import '../../../constants/custom_alter.dart';
 import '../../../constants/router.dart';
 import '../../../constants/styles.dart';
+import '../../../controllers/home_controller.dart';
 import '../../../controllers/login_controller.dart';
+import '../../helpers/helper.dart';
 import '../../widgets/custom_button.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -138,18 +141,19 @@ class _LoginScreenState extends State<LoginScreen> {
                               //     ),
                               //   ),
                               // ),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: TextButton(
-                                    onPressed: () {},
-                                    child: Text(
-                                      'Forgot Password',
-                                      style: mikado400.copyWith(
-                                          color: AppColors.grayC9C9,
-                                          fontStyle: FontStyle.italic,
-                                          decoration: TextDecoration.underline),
-                                    )),
-                              ),
+                              // Align(
+                              //   alignment: Alignment.centerRight,
+                              //   child: TextButton(
+                              //       onPressed: () {},
+                              //       child: Text(
+                              //         'Forgot Password',
+                              //         style: mikado400.copyWith(
+                              //             color: AppColors.grayC9C9,
+                              //             fontStyle: FontStyle.italic,
+                              //             decoration: TextDecoration.underline),
+                              //       )),
+                              // ),
+                              const SizedBox(height: 40),
                               CustomButton(
                                 color: Colors.white,
                                 text: 'Sign In',
@@ -162,8 +166,35 @@ class _LoginScreenState extends State<LoginScreen> {
                                       email: controller.emailController.text,
                                     );
                                     if (res.isSuccess) {
-                                      controller.emailController.clear();
-                                      Get.offAllNamed(Routes.bottomNavigator);
+                                      Get.find<HomeController>()
+                                          .getInforUser()
+                                          .then((value) {
+                                        controller.emailController.clear();
+                                        bool isAdmin = Get.find<
+                                                        HomeController>()
+                                                    .userInforMore['isAdmin'] ==
+                                                null
+                                            ? false
+                                            : Get.find<HomeController>()
+                                                    .userInforMore['isAdmin']
+                                                as bool;
+                                        bool isVip = Get.find<HomeController>()
+                                                    .userInforMore['isVip'] ==
+                                                null
+                                            ? false
+                                            : Get.find<HomeController>()
+                                                .userInforMore['isVip'] as bool;
+                                        if (isAdmin) {
+                                          Get.offAllNamed(Routes.optionLogin);
+                                        } else {
+                                          if (isVip) {
+                                            showConfirmLogin();
+                                          } else {
+                                            Get.offAllNamed(
+                                                Routes.bottomNavigator);
+                                          }
+                                        }
+                                      });
                                     } else {
                                       showDialog(
                                           context: context,
@@ -184,34 +215,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 onTap: () {
                                   // final List<MovieModel> list = [];
                                   Get.toNamed(Routes.register);
-
-                                  // logger.d(jsonDecode(allData).runtimeType);
-                                  // CollectionReference users = FirebaseFirestore
-                                  //     .instance
-                                  //     .collection('movies');
-                                  // users.add({
-                                  //   "author": "Byron Howard, Rich Moore,",
-                                  //   "category": "Hoạt hình",
-                                  //   "comments": [
-                                  //     "Phim hay qúa, rất đáng để xem",
-                                  //     "Xem đi không lãng phí thời gian của bạn đâu",
-                                  //     "Tuyệt vời !!!",
-                                  //     "Chất lượng phim quá tốt, phim rất hay !"
-                                  //   ],
-                                  //   "description":
-                                  //       "Phi Vụ Động Trời Zootopia 2016 Full HD Vietsub Thuyết Minh Zootopia 2016 - Zootopia là một thành phố kỳ lạ, không giống bất kỳ thành phố nào trong thế giới Walt Disney trước đây. Nơi đây là khu đô thị vui nhộn của các loài động vật, từ những con to như voi, tê giác, đến những con nhỏ như chuột, thỏ .... Cho đến một ngày, nữ cảnh sát thỏ Judy Hopps xuất hiện, thành phố Zootopia đã hoàn toàn thay đổi. Cô và người bạn đồng hành của mình - chú cáo đầy mánh khóe Nick Wildle (Jasson Bateman lồng tiếng) đã cùng nhau phiêu lưu trong một vụ án kỳ lạ, với mong muốn lập lại trật tự cho thành phố ZOOTOPIA. Trailer của phim vừa được tung ra với phong cách vô cùng độc đáo, Walt Disney đã sử dụng hình ảnh của hai nhân vật chính là cáo Nick Wildle và thỏ Judy Hopps với những câu chữ minh họa ngắn gọn theo nhịp nhạc nhanh - chậm. liên tục. Nhà Chuột cũng hé lộ một cảnh hài hước của cặp đôi khi Judy Hopps tức giận bắn chết Nick Wildle.",
-                                  //   "isFullHD": true,
-                                  //   "isSub": true,
-                                  //   "linkUrl":
-                                  //       "https://firebasestorage.googleapis.com/v0/b/do-an-movie.appspot.com/o/video%2FZootopia-%20Phi%20Vu%CC%A3%20%C4%90o%CC%A3%CC%82ng%20Tro%CC%9B%CC%80i.mp4?alt=media&token=01b35d44-3157-4604-ae8d-0fa96021a021",
-                                  //   "name": "Zootopia - Phi Vụ Động Trời",
-                                  //   "poster":
-                                  //       "https://upload.wikimedia.org/wikipedia/vi/archive/2/2b/20230123151114%21Kh%C3%B4ng_ph%E1%BA%A3i_l%C3%BAc_ch%E1%BA%BFt_poster.jpg",
-                                  //   "rating": 4.0,
-                                  //   "releaseYear": 2016,
-                                  //   "time": "96",
-                                  //   "trailer": "",
-                                  // });
                                 },
                               ),
                             ],
@@ -225,6 +228,78 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  void showConfirmLogin() {
+    final keyLogin = TextEditingController();
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              'Mã bảo mật của bạn. Nếu bạn quên hãy chọn liên hệ để được chúng tôi hỗ trợ.',
+              textAlign: TextAlign.center,
+              style: mikado500.copyWith(color: Colors.black),
+            ),
+            content: TextFormField(
+              controller: keyLogin,
+              // focusNode: controller.focusNodes[0],
+              cursorColor: Colors.black,
+              // autovalidateMode: AutovalidateMode,
+              validator: ((value) {
+                return value!.isEmpty ? 'Tên phim không được để trống' : null;
+              }),
+              style: mikado400.copyWith(color: Colors.black),
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(20)),
+                  fillColor: Colors.grey,
+                  filled: true,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  hintText: 'Eg: matkhaune',
+                  hintStyle:
+                      mikado400.copyWith(color: Colors.black.withOpacity(0.7))),
+            ),
+            actions: [
+              SizedBox(
+                width: 100,
+                height: 50,
+                child: CustomButton(
+                    onTap: () {
+                      if (keyLogin.text.toLowerCase() ==
+                          Get.find<HomeController>()
+                              .userInforMore['keyLogin']
+                              .toString()
+                              .toLowerCase()) {
+                        Get.offAllNamed(Routes.bottomNavigator);
+                      } else {
+                        Helper.showDialogFuntionLoss(text: 'Mã bảo mật sai');
+                        // showDialog(
+
+                      }
+                    },
+                    color: Colors.white,
+                    text: 'Tiếp tục',
+                    backgroundColor: Colors.red),
+              ),
+              SizedBox(
+                width: 110,
+                height: 50,
+                child: CustomButton(
+                    onTap: () async {
+                      Uri _uri = Uri(scheme: 'tel', path: '0385814308');
+                      await launchUrl(_uri);
+                    },
+                    color: Colors.white,
+                    text: 'Liên hệ',
+                    backgroundColor: Colors.red),
+              ),
+            ],
+          );
+        });
   }
 }
 

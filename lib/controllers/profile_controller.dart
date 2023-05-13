@@ -11,11 +11,13 @@ import 'package:permission_handler/permission_handler.dart';
 import '../constants/logger.dart';
 import '../views/helpers/helper.dart';
 import '../views/widgets/custom_loading.dart';
+import 'home_controller.dart';
 
 class ProfileController extends GetxController {
   late TextEditingController nameTextController;
   late TextEditingController emailTextController;
   late TextEditingController numberTextController;
+  late TextEditingController keyLoginController;
 
   final editKey = GlobalKey<FormState>();
   final currentUser = FirebaseAuth.instance.currentUser;
@@ -30,13 +32,13 @@ class ProfileController extends GetxController {
   var notiValue5 = false.obs;
   var notiValue6 = false.obs;
 
-  @override
-  void onInit() {
-    // nameTextController = TextEditingController(
-    //     text: Helper.formatEmail(currentUser!.email ?? 'Người dùng'));
-    // emailTextController = TextEditingController(text: currentUser!.email);
-    // numberTextController = TextEditingController();
-    super.onInit();
+  var isDarkMode = true.obs;
+
+  var homeController = Get.find<HomeController>();
+
+  void changeDarkMode(bool value) {
+    isDarkMode(value);
+    update();
   }
 
   void changeNotiValue(index, value) {
@@ -67,8 +69,7 @@ class ProfileController extends GetxController {
   bool checkChangValue() {
     ///false if no the change else return true
     if (currentUser?.displayName == null
-        ? nameTextController.text ==
-            Helper.formatEmail(currentUser!.email ?? 'Người dùng')
+        ? nameTextController.text == homeController.userInforMore['name']
         : nameTextController.text == currentUser?.displayName &&
             emailTextController.text == currentUser!.email) {
       return false;
@@ -77,14 +78,20 @@ class ProfileController extends GetxController {
     }
   }
 
-  void updateInforUser() async {
+  Future<void> updateInforUser() async {
     showLoadingOverlay();
     final ref = FirebaseFirestore.instance.collection('users');
     try {
       await currentUser!.updateDisplayName(nameTextController.text);
-      // await currentUser!.updatePhoneNumber(PhoneAuthProvider().providerId.);
-      var nameUniqueImage = DateTime.now().millisecondsSinceEpoch.toString();
+      var snap = await ref.where('email', isEqualTo: currentUser!.email).get();
+      for (var temp in snap.docs) {
+        await ref
+            .doc(temp.id)
+            .update({'phoneNumber': numberTextController.text});
+      }
+
       if (imageFile != '') {
+        var nameUniqueImage = DateTime.now().millisecondsSinceEpoch.toString();
         var upload = await firebaseStorage
             .child(nameUniqueImage)
             .putFile(File(imageFile));
@@ -97,19 +104,16 @@ class ProfileController extends GetxController {
                 currentUser!.email!.toLowerCase()) {
               if (imageUrl != '') {
                 await currentUser!.updatePhotoURL(imageUrl);
-                ref.doc(user.id).update({'avatar': imageUrl});
+                ref.doc(user.id).update({
+                  'avatar': imageUrl,
+                });
               }
             }
           }).toList();
         });
-        // var list = snapShot.values.toList();
-        // for (var user in list) {
-        //   if (user['email'] == currentUser!.email) {
-        //     logger.e('Nef');
-        //   }
-        // }
       }
-      update();
+      await homeController.getInforUser();
+
       hideLoadingOverlay();
     } catch (e) {
       hideLoadingOverlay();

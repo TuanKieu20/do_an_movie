@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:simple_animations/simple_animations.dart';
 
+import '../../controllers/livestream_controller.dart';
 import '../../controllers/reaction_controller.dart';
 
 class ReactionAnimation extends StatelessWidget {
@@ -24,7 +25,8 @@ class ReactionAnimation extends StatelessWidget {
 }
 
 class RowReactionIcon extends StatefulWidget {
-  const RowReactionIcon({Key? key}) : super(key: key);
+  const RowReactionIcon({Key? key, required this.idMovie}) : super(key: key);
+  final String idMovie;
 
   @override
   _RowReactionIconState createState() => _RowReactionIconState();
@@ -50,7 +52,7 @@ class _RowReactionIconState extends State<RowReactionIcon> with AnimationMixin {
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: GestureDetector(
-              onTap: () => socketSendLike(i),
+              onTap: () => socketSendLike(i, widget.idMovie),
               child: Image.asset(
                 'assets/images/live/icon_${ls[i]}.png',
                 scale: 3.2,
@@ -61,14 +63,11 @@ class _RowReactionIconState extends State<RowReactionIcon> with AnimationMixin {
     );
   }
 
-  void socketSendLike(int typeLike) {
+  void socketSendLike(int typeLike, idMovie) {
     // final _profileController = Get.find<ProfileController>();
     // final _livestreamController = Get.find<LiveStreamController>();
-    if (typeLike == 0) {
-      typeLike = 1;
-    } else if (typeLike == 1) {
-      typeLike = 0;
-    }
-    _controller.addAnimation(int.parse(typeLike.toString()));
+    // _controller.addAnimation(int.parse(typeLike.toString()));
+    Get.find<LivestreamControlelr>()
+        .addReaction(type: typeLike.toString(), idMovie: idMovie);
   }
 }

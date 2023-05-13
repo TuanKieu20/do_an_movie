@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../constants/logger.dart';
 import '../views/helpers/helper.dart';
+import 'home_controller.dart';
 
 class LivestreamControlelr extends GetxController {
   final db = FirebaseDatabase.instance.ref('movies');
@@ -15,6 +16,7 @@ class LivestreamControlelr extends GetxController {
   var viewers = 0.obs;
   var idViewer = ''.obs;
   var isCommentEmpty = true.obs;
+  var isListCommentEmpty = true.obs;
 
   var indexTab = 0.obs;
   var startTime = DateTime.now().obs;
@@ -31,6 +33,11 @@ class LivestreamControlelr extends GetxController {
       update();
     });
     super.onInit();
+  }
+
+  void changeListEmpty(bool value) {
+    isListCommentEmpty(value);
+    // update();
   }
 
   void changeCommentEmpty(bool value) => isCommentEmpty(value);
@@ -92,10 +99,31 @@ class LivestreamControlelr extends GetxController {
           'avatar': avatar.toString(),
           'data': comment,
           'id': userName,
+          'name': Get.find<HomeController>().userInforMore['name'],
           'time': DateTime.now().toString()
         });
         commentController.clear();
+        update();
         logger.d('OK');
+      });
+    } catch (e) {
+      logger.e(e);
+    }
+  }
+
+  void addReaction({required String type, required String idMovie}) async {
+    var ref = FirebaseDatabase.instance.ref('movies/$idMovie/reaction');
+    final check = await rootFirebaseIsExists(ref);
+    if (!check) {
+      ref = FirebaseDatabase.instance.ref('movies/$idMovie').child('reaction');
+    }
+    try {
+      await ref.once().then((value) async {
+        final newKey = ref.push().key;
+        await ref
+            .child(newKey ?? 'keyNull')
+            .set({'type': type, 'time': DateTime.now().toString()});
+        // update();
       });
     } catch (e) {
       logger.e(e);
@@ -105,6 +133,7 @@ class LivestreamControlelr extends GetxController {
   void deleteComments({required String idMovie}) {
     try {
       FirebaseDatabase.instance.ref('movies/$idMovie/comments').remove();
+      FirebaseDatabase.instance.ref('movies/$idMovie/reaction').remove();
     } catch (e) {
       logger.e(e);
     }
@@ -160,9 +189,9 @@ class LivestreamControlelr extends GetxController {
     // update();
   }
 
-  Stream<DatabaseEvent> getData() {
-    final ref = db.onValue;
-    try {} catch (e) {}
-    return ref;
-  }
+  // Stream<DatabaseEvent> getData() {
+  //   final ref = db.onValue;
+  //   try {} catch (e) {}
+  //   return ref;
+  // }
 }

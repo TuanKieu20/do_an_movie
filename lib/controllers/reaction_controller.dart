@@ -31,6 +31,7 @@ class ReactionController extends GetxController {
       ...List.filled(5, 0 - _random.nextDouble() * 100)
     ];
 
+    // ignore: no_leading_underscores_for_local_identifiers
     final _tween = TimelineTween<AniProps>()
       ..addScene(
         begin: const Duration(seconds: 0),

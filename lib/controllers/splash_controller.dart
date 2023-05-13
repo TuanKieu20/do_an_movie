@@ -16,8 +16,4 @@ class SplashController extends GetxController {
   //   super.onInit();
   // }
 
-  @override
-  void dependencies() {
-    // TODO: implement dependencies
-  }
 }

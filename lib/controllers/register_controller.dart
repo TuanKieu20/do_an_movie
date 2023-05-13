@@ -26,8 +26,22 @@ class RegisterController extends GetxController {
   final CollectionReference col =
       FirebaseFirestore.instance.collection('users');
 
+  var isEighteenAge = (-1).obs;
+  var selectTopic = [false, false, false, false, false].obs;
+  // khoa học - kinh dị - tình yêu - hành động - hoạt hình
+  void changeAge(int value) {
+    isEighteenAge(value);
+    update();
+  }
+
+  void changeTopic(bool value, int index) {
+    selectTopic()[index] = value;
+    update();
+  }
+
   // final XFile? imageFile;
   String imageFile = '';
+  // ignore: prefer_typing_uninitialized_variables
   var _timer;
   var time = 5.obs;
   var checkShowDialog = false.obs;
@@ -35,12 +49,6 @@ class RegisterController extends GetxController {
   void changeShowDialog(value) {
     checkShowDialog(value);
     update();
-  }
-
-  @override
-  void onClose() {
-    // _timer.cancel();
-    super.onClose();
   }
 
   void startTimeText() {
@@ -58,6 +66,30 @@ class RegisterController extends GetxController {
     // if (time() == 0) _timer.cancel();
   }
 
+  void updateInforUser() async {
+    try {
+      showLoadingOverlay();
+      final currentUser = FirebaseAuth.instance.currentUser;
+      col.get().then((value) {
+        for (var user in value.docs) {
+          if ((user.data() as Map)['email']
+              .toString()
+              .toLowerCase()
+              .contains(currentUser!.email!.toLowerCase())) {
+            col.doc(user.id).update({
+              'higherEighteen': isEighteenAge.toInt(),
+              'topic': selectTopic
+            });
+          }
+        }
+      });
+      hideLoadingOverlay();
+    } catch (e) {
+      hideLoadingOverlay();
+      logger.e(e);
+    }
+  }
+
   Future<ResponseModel> createEmailAndPassword({required String email}) async {
     try {
       UserCredential? user;
@@ -73,9 +105,19 @@ class RegisterController extends GetxController {
           user = await firebaseAuth.createUserWithEmailAndPassword(
               email: email, password: 'abc123456');
           await FirebaseAuth.instance.currentUser!.updatePhotoURL(imageUrl);
-          col.add({'email': email, 'avatar': imageUrl});
+          await FirebaseAuth.instance.currentUser!
+              .updateDisplayName(Helper.hideString(Helper.formatEmail(email)));
+          col.add({
+            'email': email,
+            'avatar': imageUrl,
+            'name': Helper.hideString(Helper.formatEmail(email))
+          });
         } else {
-          col.add({'email': email, 'avatar': ''});
+          col.add({
+            'email': email,
+            'avatar': '',
+            'name': Helper.hideString(Helper.formatEmail(email))
+          });
         }
       } else {
         user = await firebaseAuth.createUserWithEmailAndPassword(

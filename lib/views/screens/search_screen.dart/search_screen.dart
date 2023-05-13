@@ -104,7 +104,7 @@ class SearchScreen extends StatelessWidget {
                               itemBuilder: (context, index) {
                                 if (controller.listOptionFilter[index] ==
                                     (-1)) {
-                                  return SizedBox();
+                                  return const SizedBox();
                                 }
                                 return Container(
                                   margin: const EdgeInsets.only(right: 10),

@@ -4,6 +4,7 @@ class MovieModel {
   String? category;
   String? description;
   bool? isSub;
+  bool? isKid;
   String? author;
   bool? isFullHD;
   String? releaseYear;
@@ -28,7 +29,8 @@ class MovieModel {
       this.linkUrl,
       this.poster,
       this.name,
-      this.id});
+      this.id,
+      this.isKid});
 
   MovieModel.fromJson(Map<String, dynamic> json, {required String? idDoc}) {
     rating = json['rating'];
@@ -41,6 +43,7 @@ class MovieModel {
     category = json['category'];
     description = json['description'];
     isSub = json['isSub'];
+    isKid = json['isKid'];
     author = json['author'];
     isFullHD = json['isFullHD'];
     releaseYear = json['releaseYear'].toString();
@@ -61,6 +64,7 @@ class MovieModel {
     data['category'] = category;
     data['description'] = description;
     data['isSub'] = isSub;
+    data['isKid'] = isKid;
     data['author'] = author;
     data['isFullHD'] = isFullHD;
     data['releaseYear'] = releaseYear;

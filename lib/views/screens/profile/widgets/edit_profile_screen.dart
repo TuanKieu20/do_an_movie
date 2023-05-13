@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../constants/custom_alter.dart';
+import '../../../../constants/logger.dart';
 import '../../../../constants/styles.dart';
+import '../../../../controllers/home_controller.dart';
 import '../../../../controllers/profile_controller.dart';
 import '../../../helpers/helper.dart';
 import '../../../widgets/custom_button.dart';
@@ -17,16 +19,27 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final controller = Get.find<ProfileController>();
+  final homeContrller = Get.find<HomeController>();
+  late bool isVip;
 
   @override
   void initState() {
+    logger.e(homeContrller.userInforMore);
+    isVip = Get.find<HomeController>().userInforMore['isVip'] == null
+        ? false
+        : Get.find<HomeController>().userInforMore['isVip'] as bool;
     controller.nameTextController = TextEditingController(
         text: controller.currentUser!.displayName == null
-            ? Helper.formatEmail(controller.currentUser!.email ?? 'Người dùng')
+            ? homeContrller.userInforMore['name'] ?? 'Người dùng'
             : controller.currentUser?.displayName);
     controller.emailTextController =
         TextEditingController(text: controller.currentUser!.email);
-    controller.numberTextController = TextEditingController();
+    controller.numberTextController = TextEditingController(
+        text: homeContrller.userInforMore['phoneNumber'] ?? '');
+    if (isVip) {
+      controller.keyLoginController =
+          TextEditingController(text: homeContrller.userInforMore['keyLogin']);
+    }
     super.initState();
   }
 
@@ -118,6 +131,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         autovalidateMode: AutovalidateMode.always,
                         // enabled: false,
                         readOnly: true,
+                        onTap: () => Helper.showDialogFuntionLoss(
+                            text: 'Không được thay đổi trường này !'),
                         validator: (value) {
                           return Helper.validateEmail(value ?? '');
                         },
@@ -154,11 +169,49 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 15, horizontal: 20)),
                       ),
+                      const SizedBox(height: 10),
+                      if (isVip)
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text('Mã bảo mật',
+                              style: mikado500.copyWith(
+                                  color: Colors.white, fontSize: 18)),
+                        ),
+                      const SizedBox(height: 10),
+                      if (isVip)
+                        TextFormField(
+                          controller: controller.keyLoginController,
+                          style: mikado500.copyWith(color: Colors.white),
+                          autovalidateMode: AutovalidateMode.always,
+                          readOnly: true,
+                          validator: ((value) {
+                            if (value!.isEmpty) {
+                              return 'Vui lòng nhập tên của bạn';
+                            } else if (value.length < 6) {
+                              return 'Tên quá ngắn, vui lòng thử lại';
+                            }
+                            return null;
+                          }),
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              // hintText: 'hanhnhanhne',
+                              fillColor: const Color(0xff20232b),
+                              filled: true,
+                              hintStyle: mikado500.copyWith(color: Colors.red),
+                              labelStyle: mikado500.copyWith(color: Colors.red),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 15, horizontal: 20)),
+                        ),
                       const SizedBox(height: 30),
                       CustomButton(
                         onTap: () async {
                           if (controller.editKey.currentState!.validate()) {
-                            controller.updateInforUser();
+                            await controller.updateInforUser();
+                            Get.back();
+                            Helper.showDialogFuntionLoss(
+                                text:
+                                    'Cập nhật thông tin người dùng thành công !');
                           }
                         },
                         color: Colors.white,

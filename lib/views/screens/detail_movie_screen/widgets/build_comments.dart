@@ -72,7 +72,8 @@ class BuildComments extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            movie.comments![movie.comments!.length - 1 - index].data!,
+            Helper.validateRestrictedWord(
+                movie.comments![movie.comments!.length - 1 - index].data!),
             style: mikado400.copyWith(fontSize: 14, color: Colors.white),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,

@@ -195,7 +195,7 @@ class _LiveStreamScreenState extends State<LiveStreamScreen> {
                         );
                       }));
                 }
-                return const SizedBox();
+                return const Center(child: CircularProgressIndicator());
               });
         }));
   }

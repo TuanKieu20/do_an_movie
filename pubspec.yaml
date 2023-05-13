@@ -54,6 +54,10 @@ dependencies:
   wakelock: ^0.6.2
   firebase_database: ^10.1.0
   simple_animations: ^3.0.0
+  translator: ^0.1.7
+  video_compress: 3.1.2
+  url_launcher: ^6.1.11
+  # tflite: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -84,6 +88,7 @@ flutter:
     - assets/jsons/
     - assets/svgs/bottom_bar/
     - assets/images/live/
+    - assets/videos/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

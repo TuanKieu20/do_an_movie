@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../constants/color.dart';
+import '../../constants/restricted_words.dart';
 import '../../constants/styles.dart';
 import '../widgets/custom_button.dart';
 
@@ -86,7 +89,7 @@ class Helper {
   // message:
   //     'Tính năng đang được chúng tôi được phát triển. Xin lỗi vì sự bất tiện này !!',
 
-  static void showDialogFuntionLoss() {
+  static void showDialogFuntionLoss({String? text}) {
     Get.snackbar('', '',
         backgroundColor: Colors.green,
         snackPosition: SnackPosition.TOP,
@@ -98,7 +101,8 @@ class Helper {
           ),
         ),
         messageText: Text(
-          'Tính năng đang được chúng tôi được phát triển. Xin lỗi vì sự bất tiện này !!!',
+          text ??
+              'Tính năng đang được chúng tôi được phát triển. Xin lỗi vì sự bất tiện này !!!',
           textAlign: TextAlign.center,
           style: mikado400.copyWith(fontSize: 14),
         ));
@@ -168,6 +172,26 @@ class Helper {
     return null;
   }
 
+// mã hoá tên hiểu thị
+  static String hideString(String originalString) {
+    final random = Random();
+    final suffixLength = random.nextInt(4) + 3;
+    final suffix = List.generate(
+            suffixLength, (_) => String.fromCharCode(random.nextInt(26) + 97))
+        .join();
+
+    // Randomly insert or append the suffix to the original string
+    if (random.nextBool()) {
+      return suffix + originalString;
+    } else {
+      final index = random.nextInt(originalString.length);
+      return originalString.substring(0, index) +
+          suffix +
+          originalString.substring(index);
+    }
+  }
+
+// viết hoá kí tự đầu
   static String capitalize(String input) {
     if (input.isEmpty) {
       return input;
@@ -213,4 +237,106 @@ class Helper {
       return "Email không hợp lệ";
     }
   }
+
+  static String validateRestrictedWord(String input) {
+    final regexVietnamese = RegExp(
+        r'[0-9a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễếệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]');
+    for (var string in restrictedWords) {
+      // Check upperCase string input
+      while (input.contains(string.toLowerCase())) {
+        input = input.replaceAll(
+            string.toLowerCase(), string.replaceAll(regexVietnamese, '*'));
+      }
+      // Check lowerCase string input
+      while (input.contains(string.toUpperCase())) {
+        input = input.replaceAll(
+            string.toUpperCase(), string.replaceAll(regexVietnamese, '*'));
+      }
+      // Check lowerCase and upperCase string input
+      while (input.contains(string)) {
+        input =
+            input.replaceAll(string, string.replaceAll(regexVietnamese, '*'));
+      }
+    }
+    return input;
+  }
+
+  static String dateTimeToFormattedString(String dateTimeStr) {
+    // Chuyển đổi chuỗi kiểu DateTime thành DateTime object
+    DateTime dateTime = DateTime.parse(dateTimeStr);
+
+    // Định dạng ngày tháng năm theo kiểu "dd/MM/yyyy"
+    String formattedDate = "${dateTime.day.toString().padLeft(2, '0')}/"
+        "${dateTime.month.toString().padLeft(2, '0')}/"
+        "${dateTime.year.toString()}";
+
+    // Trả về chuỗi ngày tháng năm đã định dạng
+    return formattedDate;
+  }
+
+  static String convertDateExpried(String dateTimeStr, int type) {
+    // Chuyển đổi chuỗi kiểu DateTime thành DateTime object
+    DateTime dateTime = DateTime.parse(dateTimeStr);
+    if (type == 1) {
+      dateTime = DateTime(dateTime.year, dateTime.month + 1, dateTime.day);
+    } else {
+      dateTime = DateTime(dateTime.year + 1, dateTime.month, dateTime.day);
+    }
+    // Định dạng ngày tháng năm theo kiểu "dd/MM/yyyy"
+    String formattedDate = "${dateTime.day.toString().padLeft(2, '0')}/"
+        "${dateTime.month.toString().padLeft(2, '0')}/"
+        "${dateTime.year.toString()}";
+
+    // Trả về chuỗi ngày tháng năm đã định dạng
+    return formattedDate;
+  }
+
+  static DateTime convertdDateTime(String dateTimeStr, int type) {
+    // Chuyển đổi chuỗi kiểu DateTime thành DateTime object
+    DateTime dateTime = DateTime.parse(dateTimeStr);
+    if (type == 1) {
+      dateTime = DateTime(dateTime.year, dateTime.month + 1, dateTime.day);
+    } else {
+      dateTime = DateTime(dateTime.year + 1, dateTime.month, dateTime.day);
+    }
+    return dateTime;
+  }
+
+  static void showDialogConfirm(
+      BuildContext context, VoidCallback onTap, String text) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Xác nhận'),
+          content: const Text(
+              'Bạn có chắc chắn đặt quyền Admin cho người dùng này không ?'),
+          actions: [
+            TextButton(
+              child: const Text('Hủy'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Đồng ý'),
+              onPressed: () {
+                onTap();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  static List<Color> colorBorder = [
+    Colors.red,
+    Colors.blue,
+    Colors.green,
+    Colors.deepPurpleAccent,
+    Colors.deepOrange,
+    Colors.white,
+    Colors.yellowAccent
+  ];
 }

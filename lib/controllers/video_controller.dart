@@ -13,13 +13,9 @@ class VideoController extends GetxController {
   var isFullScreen = true.obs;
   var isPlaying = true.obs;
 
-  Timer _timer = Timer(const Duration(seconds: 100), () {});
+  SampleItem selectedMenu = SampleItem.itemOne;
 
-  @override
-  void onClose() {
-    // videoController.dispose();
-    super.onClose();
-  }
+  Timer _timer = Timer(const Duration(seconds: 100), () {});
 
   void setVideoController(VideoPlayerController controller) =>
       videoController = controller;
@@ -53,4 +49,10 @@ class VideoController extends GetxController {
       }
     });
   }
+
+  void changeSelectedMenu(value) {
+    selectedMenu = value;
+  }
 }
+
+enum SampleItem { itemOne, itemTwo, itemThree }

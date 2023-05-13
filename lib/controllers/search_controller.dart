@@ -157,7 +157,7 @@ class SearchController extends GetxController {
           listTemp.add(movie);
         }
       } else {
-        if (movie.category!.contains('Khoa học')) {
+        if (movie.category! == ('Khoa học')) {
           listTemp.add(movie);
         }
       }

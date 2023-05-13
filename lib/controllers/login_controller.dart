@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/response_model.dart';
 import '../views/widgets/custom_loading.dart';
@@ -31,6 +32,14 @@ class LoginController extends GetxController {
     super.onInit();
   }
 
+  @override
+  void onClose() {
+    emailController.dispose();
+    passwordController.dispose();
+    emailController.clear();
+    super.onClose();
+  }
+
   changeStatusFocus({required int index, required bool isFoucus}) {
     if (index == 0) {
       isEmailFocus(isFoucus);
@@ -47,6 +56,10 @@ class LoginController extends GetxController {
       showLoadingOverlay();
       UserCredential user = await firebaseAuth.signInWithEmailAndPassword(
           email: '$email@gmail.com', password: 'abc123456');
+      final pref = Get.find<SharedPreferences>();
+      if (pref.getBool('checkUpdateInf') == false) {
+        pref.setBool('checkUpdateInf', true);
+      }
       hideLoadingOverlay();
       return ResponseModel(
           isSuccess: true,

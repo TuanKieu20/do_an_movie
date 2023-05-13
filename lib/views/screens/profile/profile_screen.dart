@@ -19,77 +19,88 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
-    Get.put(ProfileController());
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        elevation: 0.0,
+    final controller = Get.put(ProfileController());
+    return GetBuilder<ProfileController>(builder: (builder) {
+      return Scaffold(
         backgroundColor: Colors.black,
-        centerTitle: false,
-        leadingWidth: 60,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 20),
-          child: Image.asset(
-            'assets/images/logo.png',
-            width: 40,
-            height: 40,
+        appBar: AppBar(
+          elevation: 0.0,
+          backgroundColor: Colors.black,
+          centerTitle: false,
+          leadingWidth: 60,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: Image.asset(
+              'assets/images/logo.png',
+              width: 40,
+              height: 40,
+            ),
+          ),
+          title: Text(
+            'Profile',
+            style: mikado600.copyWith(color: Colors.white, fontSize: 20),
           ),
         ),
-        title: Text(
-          'Profile',
-          style: mikado600.copyWith(color: Colors.white, fontSize: 20),
-        ),
-      ),
-      body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const PremiumHeader(),
-              const SizedBox(height: 10),
-              Expanded(
-                  child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    rowProfile(
-                        icon: Icons.person_outline_rounded,
-                        text: 'Cá nhân',
-                        onTap: () => Get.toNamed(Routes.editProfile)),
-                    rowProfile(
-                        icon: Icons.notifications_none_rounded,
-                        text: 'Thông báo',
-                        onTap: (() => Get.toNamed(Routes.notification))),
-                    rowProfile(
-                      icon: Icons.file_download_outlined,
-                      text: 'Tải xuống',
-                      onTap: () => Get.toNamed(Routes.download),
-                    ),
-                    rowProfile(
-                        icon: Icons.security,
-                        text: 'Bảo mật',
-                        onTap: (() => Get.toNamed(Routes.security))),
-                    rowProfile(
-                        icon: Icons.language_rounded,
-                        text: 'Ngôn ngữ',
-                        isLanguage: true),
-                    rowProfile(
+        body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const PremiumHeader(),
+                const SizedBox(height: 10),
+                Expanded(
+                    child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      rowProfile(
+                          icon: Icons.person_outline_rounded,
+                          text: 'Cá nhân',
+                          onTap: () {
+                            // await Get.find<HomeController>().getInforUser();
+                            Get.toNamed(Routes.editProfile);
+                          }),
+                      rowProfile(
+                          icon: Icons.history,
+                          text: 'Lịch sử giao dịch',
+                          onTap: () => Get.toNamed(Routes.historyPayment)),
+                      rowProfile(
+                          icon: Icons.notifications_none_rounded,
+                          text: 'Thông báo',
+                          onTap: (() => Get.toNamed(Routes.notification))),
+                      rowProfile(
+                        icon: Icons.file_download_outlined,
+                        text: 'Tải xuống',
+                        onTap: () => Get.toNamed(Routes.download),
+                      ),
+                      rowProfile(
+                          icon: Icons.security,
+                          text: 'Bảo mật',
+                          onTap: (() => Get.toNamed(Routes.security))),
+                      rowProfile(
+                          icon: Icons.language_rounded,
+                          text: 'Ngôn ngữ',
+                          isLanguage: true),
+                      rowProfile(
                         icon: Icons.dark_mode_outlined,
                         text: 'Chế độ ban đêm',
-                        isDarkMode: true),
-                    rowProfile(
-                        icon: Icons.logout_rounded,
-                        text: 'Đăng xuất',
-                        onTap: () async {
-                          await FirebaseAuth.instance.signOut();
-                          // Get.put(SearchController());
-                          Get.offAllNamed(Routes.login);
-                        }),
-                  ],
-                ),
-              ))
-            ],
-          )),
-    );
+                        isDarkMode: true,
+                      ),
+                      rowProfile(
+                          icon: Icons.logout_rounded,
+                          text: 'Đăng xuất',
+                          onTap: () async {
+                            await FirebaseAuth.instance.signOut();
+                            // Get.find<HomeController>().isUserVip(false);
+                            // Get.put(SearchController());
+                            Get.offAllNamed(Routes.login);
+                          }),
+                    ],
+                  ),
+                ))
+              ],
+            )),
+      );
+    });
   }
 
   InkWell rowProfile(
@@ -121,10 +132,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(width: 10),
             isDarkMode
                 ? CupertinoSwitch(
-                    value: true,
+                    value: Get.find<ProfileController>().isDarkMode.value,
                     activeColor: Colors.red,
                     trackColor: Colors.grey,
-                    onChanged: (value) {})
+                    onChanged: ((value) {
+                      Get.find<ProfileController>().changeDarkMode(value);
+                    }))
                 : const Icon(
                     Icons.arrow_forward_ios_rounded,
                     color: Colors.white,
