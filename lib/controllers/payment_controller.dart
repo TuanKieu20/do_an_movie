@@ -57,7 +57,7 @@ class PaymentController extends GetxController {
     }
   }
 
-  void updateKeyLogin() async {
+  Future<void> updateKeyLogin() async {
     var col = FirebaseFirestore.instance.collection('users');
     try {
       col.get().then((value) {
@@ -70,6 +70,7 @@ class PaymentController extends GetxController {
           }
         }
       });
+      update();
     } catch (e) {
       logger.e(e);
     }

@@ -64,17 +64,17 @@ class HomeController extends GetxController {
         if ((userTemp as Map)['email'].toString().toLowerCase().contains(
             FirebaseAuth.instance.currentUser!.email!.toLowerCase())) {
           userInforMore = userTemp;
+          // update();
           if (userInforMore['isVip'] == null ||
               userInforMore['isVip'] == false) {
             isUserVip.value = false;
           } else {
             isUserVip(userInforMore['isVip']);
           }
-
+          update();
           return userTemp;
         }
       }
-      // update();
     } catch (e) {
       logger.e('err is not err =)))');
     }

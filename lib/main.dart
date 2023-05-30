@@ -1,6 +1,7 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:do_an_movie/constants/router.dart';
 import 'package:do_an_movie/controllers/admin_controller.dart';
+import 'package:do_an_movie/controllers/connect_controller.dart';
 import 'package:do_an_movie/controllers/livestream_controller.dart';
 import 'package:do_an_movie/controllers/loading_controller.dart';
 import 'package:do_an_movie/controllers/login_controller.dart';
@@ -21,6 +22,7 @@ void main() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   await Firebase.initializeApp();
   Get.put(LoadingController());
+  Get.put(ConnectivityController());
   Get.lazyPut(() => SplashController());
   Get.put(HomeController());
 
@@ -47,6 +49,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
+    // Get.find<ConnectivityController>().listenConectionChanged();
     final pref = Get.find<SharedPreferences>();
     if (pref.getBool('checkUpdateInf') == null) {
       pref.setBool('checkUpdateInf', false);

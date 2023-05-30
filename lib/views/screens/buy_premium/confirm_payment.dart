@@ -211,11 +211,11 @@ class ConfirmPayment extends StatelessWidget {
                                                     // focusNode: controller.focusNodes[0],
                                                     cursorColor: Colors.black,
                                                     // autovalidateMode: AutovalidateMode,
-                                                    validator: ((value) {
-                                                      return value!.isEmpty
-                                                          ? 'Tên phim không được để trống'
-                                                          : null;
-                                                    }),
+                                                    // validator: ((value) {
+                                                    //   return value!.isEmpty
+                                                    //       ? 'Tên phim không được để trống'
+                                                    //       : null;
+                                                    // }),
                                                     style: mikado400.copyWith(
                                                         color: Colors.black),
                                                     decoration: InputDecoration(
@@ -247,7 +247,7 @@ class ConfirmPayment extends StatelessWidget {
                                                       child: SizedBox(
                                                         width: 150,
                                                         child: CustomButton(
-                                                            onTap: () {
+                                                            onTap: () async {
                                                               if (controller
                                                                   .keyLogin
                                                                   .text
@@ -271,11 +271,8 @@ class ConfirmPayment extends StatelessWidget {
                                                                       .changeCurrentIndex(
                                                                           index:
                                                                               0);
-                                                                  controller
+                                                                  await controller
                                                                       .updateKeyLogin();
-                                                                  Get.find<
-                                                                          HomeController>()
-                                                                      .getInforUser();
                                                                 }
                                                               } else {
                                                                 Helper.showDialogFuntionLoss(

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../../../constants/router.dart';
 import '../../../constants/styles.dart';
+import '../../../controllers/home_controller.dart';
 import '../../../controllers/profile_controller.dart';
 import '../../helpers/helper.dart';
 import 'widgets/premium_header.dart';
@@ -55,8 +56,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       rowProfile(
                           icon: Icons.person_outline_rounded,
                           text: 'Cá nhân',
-                          onTap: () {
-                            // await Get.find<HomeController>().getInforUser();
+                          onTap: () async {
+                            await Get.find<HomeController>().getInforUser();
                             Get.toNamed(Routes.editProfile);
                           }),
                       rowProfile(

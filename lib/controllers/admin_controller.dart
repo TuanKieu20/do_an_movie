@@ -174,8 +174,8 @@ class AdminController extends GetxController {
       }
       final file = File(pickedFile.path);
       fileVideo = file;
-      generateThumbnail(file);
-      generateVideo(file);
+      await generateThumbnail(file);
+      await generateVideo(file);
       var nameUniqueImage = DateTime.now().millisecondsSinceEpoch.toString();
       var upload = await firebaseStorage
           .child(nameUniqueImage)
@@ -197,14 +197,14 @@ class AdminController extends GetxController {
     }
   }
 
-  void generateThumbnail(File file) async {
+  Future<void> generateThumbnail(File file) async {
     final thumbnailfile =
         await VideoCompress.getFileThumbnail(file.path, quality: 50);
     fileThumnail = thumbnailfile;
     update();
   }
 
-  void generateVideo(File file) async {
+  Future<void> generateVideo(File file) async {
     final info = await VideoCompress.compressVideo(
       file.path,
       quality: VideoQuality.DefaultQuality,
@@ -246,12 +246,12 @@ class AdminController extends GetxController {
     };
     try {
       showLoadingOverlay();
-      col.add(data);
+      await col.add(data);
       hideLoadingOverlay();
-
+      await getMovies();
       Get.back();
-      clearAll();
 
+      clearAll();
       Helper.showDialogFuntionLoss(text: 'Thêm thành công');
     } catch (e) {
       logger.e(e);
@@ -268,10 +268,10 @@ class AdminController extends GetxController {
     isKid(false);
     isSub(false);
     if (fileVideo != null) {
-      fileVideo!.delete();
+      fileVideo == null;
     }
     if (fileThumnail != null) {
-      fileThumnail!.delete();
+      fileThumnail == null;
     }
 
     poster = '';

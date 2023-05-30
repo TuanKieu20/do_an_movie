@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:simple_animations/simple_animations.dart';
 import 'package:video_player/video_player.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -35,10 +36,10 @@ class CustomVideoPlayer extends StatefulWidget {
 }
 
 class _CustomVideoPlayerState extends State<CustomVideoPlayer>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AnimationMixin {
   late VideoPlayerController _videoPlayerController;
   late TabController tabController;
-  final controller = Get.put(VideoController());
+  final controller1 = Get.put(VideoController());
   final liveStreamController = Get.find<LivestreamControlelr>();
   MovieModel get movie => widget.movie;
   bool get isLive => widget.isLivve;
@@ -46,7 +47,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
   void initState() {
     super.initState();
     if (Get.find<HomeController>().isUserVip.value) {
-      controller.changeSelectedMenu(SampleItem.itemTwo);
+      controller1.changeSelectedMenu(SampleItem.itemTwo);
     }
     liveStreamController.scrollController = ScrollController();
     tabController = TabController(length: 2, vsync: this);
@@ -61,20 +62,20 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
           ? 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
           : widget.isTrailer
               ? movie.trailer!
-              // : widget.movie.linkUrl!,
-              : 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+              : widget.movie.linkUrl!,
+      // : 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     )
       // _videoPlayerController =
       //     VideoPlayerController.asset('assets/videos/demo.mp4')
       ..addListener(_listener)
       ..initialize().then((_) {
-        controller.setVideoController(_videoPlayerController);
+        controller1.setVideoController(_videoPlayerController);
         if (widget.isLivve) {
           _videoPlayerController
               .seekTo(Duration(seconds: liveStreamController.getStartTime()));
         }
         _videoPlayerController.play();
-        controller.autoHideOverlay();
+        controller1.autoHideOverlay();
         setState(() {});
       }, onError: (e) {
         e as PlatformException;
@@ -87,7 +88,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
   //     'assets/videos/Marvel Studios’ Eternals - Official Teaser.mp4')
 
   _listener() async {
-    controller
+    controller1
       ..changePosition(_videoPlayerController.value.position)
       ..chagneDuration(_videoPlayerController.value.duration);
     if (_videoPlayerController.value.position.inSeconds >=
@@ -128,7 +129,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
                 return Stack(
                   children: [
                     _videoPlayerController.value.isInitialized
-                        ? controller.isFullScreen()
+                        ? controller1.isFullScreen()
                             ? VideoPlayerFullscreen(
                                 videoPlayerController: _videoPlayerController,
                                 movie: widget.movie,
@@ -181,7 +182,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
                                   )
                                 ],
                               )
-                        : controller.isFullScreen()
+                        : controller1.isFullScreen()
                             ? _buildOverlayInit()
                             : AspectRatio(
                                 aspectRatio: 16 / 9,
@@ -307,6 +308,8 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
                                 typeLike = 0;
                               }
                               // snapshot.data!.previousChildKey;
+                              Get.put(ReactionController(
+                                  animationController: controller));
                               Get.find<ReactionController>()
                                   .addAnimation(typeLike);
                             }
@@ -496,8 +499,8 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer>
                       onTap: (() {
                         // logger.e('herhe');
                         _videoPlayerController.dispose();
-                        if (controller.isFullScreen.value) {
-                          controller.changeIsFullScreen(false);
+                        if (controller1.isFullScreen.value) {
+                          controller1.changeIsFullScreen(false);
                           SystemChrome.setPreferredOrientations([
                             DeviceOrientation.portraitUp,
                             DeviceOrientation.portraitDown,
@@ -843,12 +846,6 @@ class CommentEmpty extends StatelessWidget {
                                     comment: liveStreamController
                                         .commentController.text,
                                     idMovie: movie.id ?? '');
-                                // liveStreamController.scrollTo(
-                                //     liveStreamController
-                                //             .scrollController
-                                //             .position
-                                //             .maxScrollExtent +
-                                //         100);
                               }
                             },
                             padding: const EdgeInsets.all(0),
