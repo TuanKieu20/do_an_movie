@@ -1,6 +1,22 @@
 # Đồ Án Tốt Nghiệp
 Đồ án tốt nghiệp 2023 bản final
+# Tính năng
+<ul>
+    <li>Đăng nhập</li>
+    <li>Đăng ký</li>
+    <li>Xem Video</li>
+    <li>Bình Luận</li>
+    <li>Thêm danh sách yêu thích</li>
+    <li>Xem Livestream</li>
+</ul>
 
+# Công nghệ sử dụng
+<ul>
+    <li>Firebase</li>
+    <li>Flutter</li>
+</ul>
+
+# Demo ứng dụng
 <table border>
     <tr>
         <td><img src="./screenshot/1.png" alt="" width="200"></td>
