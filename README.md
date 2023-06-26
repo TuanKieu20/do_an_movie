@@ -13,7 +13,7 @@
 # Công nghệ sử dụng
 <ul>
     <li>Firebase</li>
-    <li>Flutter</li>
+    <li>Flutter - version 3.3.4</li>
 </ul>
 
 # Demo ứng dụng
